@@ -1,8 +1,7 @@
-import docker.errors
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 import docker
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, get_current_user, get_jwt, get_jwt_header
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt
 # import pyte
 import socket
 import logging
