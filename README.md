@@ -27,7 +27,11 @@ pip install -r requirements.txt
 3. Run the application:
 
 ```bash
+# In development environment
 python app.py
+
+# In production environment
+gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:5000
 ```
 
 The application will be available at `http://localhost:5000`.
