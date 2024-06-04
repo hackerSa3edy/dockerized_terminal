@@ -5,12 +5,18 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt
 # import pyte
 import socket
 import logging
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['JWT_SECRET_KEY'] = 'JWT_S3CR3T_K3Y' # fake: jwt-secret-string
+app.config['JWT_IDENTITY_CLAIM'] = 'user_id'  # Change this if you want to use a different claim
 jwt = JWTManager(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+# @jwt.user_identity_loader
+# def user_identity_lookup(identity):
+#     return identity
 
 # Initialize Docker client
 client = docker.from_env()
@@ -38,8 +44,9 @@ def handle_connect():
 @jwt_required(locations=['headers', 'cookies'])
 def handle_disconnect():
     JWTtoken = get_jwt()
+
     role = JWTtoken['user_role']
-    user_id = JWTtoken['sub']
+    user_id = JWTtoken['user_id']
 
     try:
         container = client.containers.get(f'{role}-{user_id}')
@@ -57,7 +64,7 @@ def handle_start_terminal(data):
 
     JWTtoken = get_jwt()
     role = JWTtoken['user_role']
-    user_id = JWTtoken['sub']
+    user_id = JWTtoken['user_id']
     try:
         try:
             container = client.containers.get(f'{role}-{user_id}')
@@ -82,7 +89,7 @@ def handle_start_terminal(data):
 def handle_input(data):
     JWTtoken = get_jwt()
     role = JWTtoken['user_role']
-    user_id = JWTtoken['sub']
+    user_id = JWTtoken['user_id']
 
     container = client.containers.get(f'{role}-{user_id}')
     input_data = data['input']
