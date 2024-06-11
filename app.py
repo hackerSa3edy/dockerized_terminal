@@ -29,7 +29,7 @@ terminals = {}
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 
-@app.route('/')
+@app.route('/terminal')
 @jwt_required(locations=['headers', 'cookies'])
 def index():
     # token = get_jwt()
